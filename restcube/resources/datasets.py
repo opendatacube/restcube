@@ -19,7 +19,7 @@ class Dataset(Resource):
                 abort(400, message="Datacube does not contain dataset with id {}".format(ds_id))
 
             dataset = dc.index.datasets.get(ds_id)
-            return dataset.metadata_doc, 200
+            return {"metadata": dataset.metadata_doc}, 200
 
 
 class Datasets(Resource):
@@ -34,7 +34,7 @@ class Datasets(Resource):
             ds = dc.index.datasets.search(product=product)
             datasets = [ d.metadata.id for d in ds ]
 
-        return datasets, 200
+        return {"ids": datasets}, 200
 
     def post(self):
         import urllib.request

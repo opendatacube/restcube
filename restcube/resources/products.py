@@ -19,7 +19,7 @@ class Product(Resource):
             if product is None:
                 abort(400, message="product {} does not exist".format(name))
 
-            return product.to_dict(), 200
+            return { "metadata": product.to_dict() }, 200
 
     def post(self, name):
         import urllib.request
@@ -61,6 +61,7 @@ class Products(Resource):
     def get(self):
         products = []
         with Datacube() as dc:
-            products = [ p.to_dict() for p in dc.index.products.get_all() ]
+            products = [ { "metadata": p.to_dict() } for p in dc.index.products.get_all() ]
 
-        return products, 200
+
+        return {"count": len(products), "products": products}, 200
