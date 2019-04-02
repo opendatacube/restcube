@@ -1,11 +1,12 @@
 from flask_restful import reqparse, abort, Resource
 from yaml import safe_load_all
+import requests
 
 from datacube import Datacube
 
 
 postargparser = reqparse.RequestParser()
-postargparser.add_argument('product_definition_url', type=str, help="URL of product defintion YAML file")
+postargparser.add_argument('product_definition_url', type=str, required=True, help="URL of product defintion YAML file")
 
 putargparser = postargparser.copy()
 putargparser.add_argument('allow_unsafe', type=bool, default=False, help="If true, will allow unsafe product changes to be made")
@@ -20,22 +21,6 @@ class Product(Resource):
                 abort(400, message="product {} does not exist".format(name))
 
             return { "metadata": product.to_dict() }, 200
-
-    def post(self, name):
-        import urllib.request
-        args = postargparser.parse_args()
-
-        products = []
-        with Datacube() as dc:
-            doc_request = urllib.request.urlopen(args['product_definition_url'])
-            docs = safe_load_all(doc_request.read())
-
-            for doc in docs:
-                product = dc.index.products.from_doc(doc)
-                product = dc.index.products.add(product)
-                products.append(product.to_dict()['name'])
-
-        return {"message": "{} successfully added to datacube".format(" ".join(products))}, 200
 
     def put(self, name):
         import urllib.request
@@ -65,3 +50,21 @@ class Products(Resource):
 
 
         return {"count": len(products), "products": products}, 200
+
+    def post(self):
+        args = postargparser.parse_args()
+        print(args)
+
+        products = []
+        with Datacube() as dc:
+            doc_request = requests.get(args['product_definition_url'])
+            doc_request.raise_for_status()
+            docs = safe_load_all(doc_request.text)
+
+            for doc in docs:
+                product = dc.index.products.from_doc(doc)
+                product = dc.index.products.add(product)
+                products.append(product.to_dict()['name'])
+
+        return {"message": "{} successfully added to datacube".format(" ".join(products))}, 200
+
