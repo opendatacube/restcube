@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_restful import Api
-from restcube.resources.products import Product, Products
-from restcube.resources.datasets import Dataset, Datasets
-from restcube.resources.datacube import Datacube
+from windsweeper.resources.products import Product, Products
+from windsweeper.resources.datasets import Dataset, Datasets
+from windsweeper.resources.datacube import Datacube
 
 app = Flask(__name__)
 api = Api(app)
