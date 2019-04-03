@@ -3,7 +3,7 @@ from yaml import safe_load_all
 import requests
 
 from datacube import Datacube
-from windsweeper.datacube.api import get_products
+from windsweeper.datacube.api import get_products, add_products
 
 
 postargparser = reqparse.RequestParser()
@@ -52,18 +52,9 @@ class Products(Resource):
 
     def post(self):
         args = postargparser.parse_args()
-        print(args)
+        ret = list()
+        for product in add_products(args['product_definition_url']):
+            ret.append({"metadata": product.to_dict()})
 
-        products = []
-        with Datacube() as dc:
-            doc_request = requests.get(args['product_definition_url'])
-            doc_request.raise_for_status()
-            docs = safe_load_all(doc_request.text)
-
-            for doc in docs:
-                product = dc.index.products.from_doc(doc)
-                product = dc.index.products.add(product)
-                products.append(product.to_dict()['name'])
-
-        return {"message": "{} successfully added to datacube".format(" ".join(products))}, 200
+        return ret, 200
 

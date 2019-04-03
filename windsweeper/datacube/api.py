@@ -2,6 +2,7 @@ from datacube import Datacube
 from datacube.index.hl import Doc2Dataset
 import validators
 import requests
+from yaml import safe_load_all
 
 
 def get_datasets(**kwargs):
@@ -39,6 +40,20 @@ def add_datasets(urls, product):
 
 def get_products(**kwargs):
     with Datacube() as dc:
+        # Name is a special case
         if "name" in kwargs:
             yield dc.index.products.get_by_name(kwargs["name"])
         yield from dc.index.products.search(**kwargs)
+
+
+def add_products(product_definition_url):
+    with Datacube() as dc:
+        doc_request = requests.get(product_definition_url)
+        doc_request.raise_for_status()
+        docs = safe_load_all(doc_request.text)
+
+        for doc in docs:
+            product = dc.index.products.from_doc(doc)
+            product = dc.index.products.add(product)
+            yield product
+

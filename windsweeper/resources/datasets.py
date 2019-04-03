@@ -33,9 +33,9 @@ class Datasets(Resource):
         product = args['product']
 
         ds = get_datasets(**{"product": product})
-        datasets = [ d.metadata.id for d in ds ]
+        datasets = [ d.metadata_doc for d in ds ]
 
-        return {"ids": datasets}, 200
+        return datasets, 200
 
     def post(self):
         args = postargparser.parse_args()
