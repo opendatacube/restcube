@@ -15,14 +15,15 @@ postargparser.add_argument('dataset_definition_urls', action="append", help="Lis
 class Dataset(Resource):
 
     def get(self, ds_id):
+        ret = dict()
         try:
             ds = list(get_datasets(id=ds_id))
-        except ValueError as e:
-            abort(400, message=str(e))
-        d = ds[0]
-        if d is None:
-            abort(400, message="Datacube does not contain dataset with id {}".format(ds_id))
-        return {"metadata": d.metadata_doc}, 200
+            d = ds[0]
+            ret = {"metadata": d.metadata_doc}
+        except ValueError:
+            d = None
+
+        return ret, 200
 
 
 class Datasets(Resource):

@@ -8,7 +8,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(Product, "/products/<string:name>")
-api.add_resource(Products, "/products")
+api.add_resource(Products, "/products", "/products/")
 api.add_resource(Dataset, "/datasets/<string:ds_id>")
 api.add_resource(Datasets, "/datasets", "/datasets/")
 api.add_resource(Datacube, "/datacube")

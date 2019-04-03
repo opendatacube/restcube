@@ -35,3 +35,10 @@ def add_datasets(urls, product):
                 yield { "status": "already indexed", "url": url, "id": dataset.id }
             d = dc.index.datasets.add(dataset)
             yield {"status": "indexed", "id": d.metadata.id, "url": url}
+
+
+def get_products(**kwargs):
+    with Datacube() as dc:
+        if "name" in kwargs:
+            yield dc.index.products.get_by_name(kwargs["name"])
+        yield from dc.index.products.search(**kwargs)

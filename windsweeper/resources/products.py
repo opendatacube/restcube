@@ -3,6 +3,7 @@ from yaml import safe_load_all
 import requests
 
 from datacube import Datacube
+from windsweeper.datacube.api import get_products
 
 
 postargparser = reqparse.RequestParser()
@@ -14,13 +15,13 @@ putargparser.add_argument('allow_unsafe', type=bool, default=False, help="If tru
 class Product(Resource):
 
     def get(self, name):
-        with Datacube() as dc:
-            product = dc.index.products.get_by_name(name)
+        ret = dict()
+        products = list(get_products(**{"name": name}))
+        p = products[0]
+        if p is not None:
+            ret = { "metadata": p.to_dict() }
 
-            if product is None:
-                abort(400, message="product {} does not exist".format(name))
-
-            return { "metadata": product.to_dict() }, 200
+        return ret, 200
 
     def put(self, name):
         import urllib.request
@@ -45,10 +46,8 @@ class Product(Resource):
 class Products(Resource):
     def get(self):
         products = []
-        with Datacube() as dc:
-            products = [ { "metadata": p.to_dict() } for p in dc.index.products.get_all() ]
-
-
+        for product in get_products():
+            products.append(product.to_dict())
         return {"count": len(products), "products": products}, 200
 
     def post(self):
