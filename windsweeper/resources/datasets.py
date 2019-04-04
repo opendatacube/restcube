@@ -7,10 +7,12 @@ from yaml import safe_load
 
 
 getargparser = reqparse.RequestParser()
-getargparser.add_argument('product', type=str, help="Name of the Datacube product")
+getargparser.add_argument('product', type=str, required=False, help="Name of the Datacube product")
+getargparser.add_argument('url', type=str, required=False, help="URL of dataset definition")
 
 postargparser = getargparser.copy()
 postargparser.add_argument('dataset_definition_urls', action="append", help="List of urls containing dataset definitions")
+postargparser.remove_argument('url')
 
 class Dataset(Resource):
 
@@ -30,9 +32,12 @@ class Datasets(Resource):
 
     def get(self):
         args = getargparser.parse_args()
-        product = args['product']
+        query = dict()
+        for k, v in args.items():
+            if v is not None:
+                query[k] = v
 
-        ds = get_datasets(**{"product": product})
+        ds = get_datasets(**query)
         datasets = [ d.metadata_doc for d in ds ]
 
         return datasets, 200
