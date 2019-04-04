@@ -1,6 +1,6 @@
 FROM opendatacube/datacube-core:latest
 
-RUN pip3 install flask flask-restful gunicorn boto3 requests validators && rm -rf $HOME/.cache/pip
+RUN pip3 install flask flask-restful gunicorn boto3 requests validators gevent && rm -rf $HOME/.cache/pip
 
 WORKDIR /opt/odc/windsweeper
 ADD . .

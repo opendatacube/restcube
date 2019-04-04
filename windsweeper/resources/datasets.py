@@ -39,13 +39,14 @@ class Datasets(Resource):
 
         ds = get_datasets(**query)
         datasets = [ d.metadata_doc for d in ds ]
-
+        print (datasets)
         return datasets, 200
 
     def post(self):
         args = postargparser.parse_args()
         product = args['product']
         urls = args['dataset_definition_urls']
+        print(f"product: {product} urls: {urls}")
 
         statuses = list(add_datasets(urls, product))
 

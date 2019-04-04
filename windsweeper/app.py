@@ -18,6 +18,7 @@ key = os.getenv("API_KEY", None)
 
 @app.before_request
 def before_request():
+    print(request.values)
     api_key = request.headers.get('x-api-key', None)
     if api_key is None:
         abort(401)
