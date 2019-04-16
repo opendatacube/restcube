@@ -8,7 +8,7 @@ postargparser = reqparse.RequestParser()
 postargparser.add_argument('pattern', type=str, required=True, help="S3 Pattern to search")
 postargparser.add_argument('dc_product', type=str, required=False, help="DC Product to match against")
 
-sqs_url = os.getenv("SQS_URL", "")
+sqs_url = os.getenv("SQS_QUEUE_URL", "")
 
 class Index(Resource):
 
