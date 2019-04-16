@@ -27,3 +27,7 @@ class Tasks(Resource):
                 "error": str(task.info)
             }
         return response, 200
+
+
+    def delete(self, task_id):
+        make_celery().control.revoke(task_id, terminate=True)

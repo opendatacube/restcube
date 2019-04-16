@@ -146,7 +146,7 @@ def s3_find(uri, skip_check):
     yield from stream
 
 
-@celery.task(bind=True, acks_late=True)
+@celery.task(bind=True)
 def send_s3_urls_to_sqs(self, s3_pattern, dc_product, sqs_url):
 
     # Unfortunately Celery does not cope well with
