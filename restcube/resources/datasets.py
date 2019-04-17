@@ -1,7 +1,7 @@
 from flask_restful import reqparse, abort, Resource
 
 from datacube import Datacube
-from windsweeper.datacube.api import get_datasets, add_datasets
+from restcube.datacube.api import get_datasets, add_datasets
 from datacube.index.hl import Doc2Dataset
 from yaml import safe_load
 

@@ -3,7 +3,7 @@ from yaml import safe_load_all
 import requests
 
 from datacube import Datacube
-from windsweeper.datacube.api import get_products, add_products
+from restcube.datacube.api import get_products, add_products
 
 
 postargparser = reqparse.RequestParser()

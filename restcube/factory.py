@@ -4,7 +4,7 @@ import os
 
 
 def create_app():
-    app = Flask('windsweeper')
+    app = Flask('restcube')
     return app
 
 def make_celery(app=None):

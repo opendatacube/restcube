@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from windsweeper.factory import make_celery
+from restcube.factory import make_celery
 from celery.result import AsyncResult
 
 class Tasks(Resource):

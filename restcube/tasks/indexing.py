@@ -14,11 +14,11 @@ from odc.aio import S3Fetcher
 from odc.aws._find import parse_query, norm_predicate
 from odc.ppt import future_results
 
-from windsweeper.factory import make_celery
+from restcube.factory import make_celery
 
 celery = make_celery()
 
-windsweeper_location = os.getenv("WINDSWEEPER_LOCATION")
+restcube_location = os.getenv("restcube_LOCATION")
 
 class SQSProducer(object):
     def __init__(self,
@@ -172,7 +172,7 @@ def send_s3_urls_to_sqs(self, s3_pattern, dc_product, sqs_url):
         else:
             future.result()
         count = count + 1
-        state = {"last_processed": s3_url.url, "count": count}
+        state = {"type": "index","last_processed": s3_url.url, "count": count}
         self.update_state(state="PROGRESS", meta=state)
 
     return state

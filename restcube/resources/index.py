@@ -1,7 +1,7 @@
 from flask_restful import Api, reqparse, abort, Resource
 from flask import current_app
-from windsweeper.tasks.indexing import send_s3_urls_to_sqs
-from windsweeper.resources.tasks import Tasks
+from restcube.tasks.indexing import send_s3_urls_to_sqs
+from restcube.resources.tasks import Tasks
 import os
 
 postargparser = reqparse.RequestParser()

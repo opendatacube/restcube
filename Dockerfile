@@ -11,7 +11,7 @@ RUN pip3 install 'git+https://github.com/opendatacube/dea-proto.git' && rm -rf $
 RUN pip3 install 'git+https://github.com/opendatacube/dea-proto.git#egg=odc_apps_cloud&subdirectory=apps/cloud'
 
 
-WORKDIR /opt/odc/windsweeper
+WORKDIR /opt/odc/restcube
 ADD . .
 
-CMD gunicorn -b "0.0.0.0:8000" "windsweeper.app:app"
+CMD gunicorn -b "0.0.0.0:8000" "restcube.app:app"
