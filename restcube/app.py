@@ -16,7 +16,7 @@ api.add_resource(Products, "/products", "/products/")
 api.add_resource(Dataset, "/datasets/<string:ds_id>")
 api.add_resource(Datasets, "/datasets", "/datasets/")
 api.add_resource(Datacube, "/datacube")
-api.add_resource(Index, "/index/")
+api.add_resource(Index, "/index/", "/index")
 api.add_resource(Tasks, "/tasks/<string:task_id>")
 
 key = os.getenv("API_KEY", None)

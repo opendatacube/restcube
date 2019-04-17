@@ -18,8 +18,6 @@ from restcube.factory import make_celery
 
 celery = make_celery()
 
-restcube_location = os.getenv("restcube_LOCATION")
-
 class SQSProducer(object):
     def __init__(self,
                  region_name=None):
