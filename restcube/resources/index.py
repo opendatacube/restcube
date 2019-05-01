@@ -1,7 +1,7 @@
 from flask_restful import Api, reqparse, abort, Resource
 from flask import current_app
-from restcube.tasks.indexing import send_s3_urls_to_sqs
-from restcube.resources.tasks import Tasks
+from restcube.tasks.indexing import index_from_s3
+from restcube.resources.tasks import Task
 import os
 
 postargparser = reqparse.RequestParser()
@@ -18,6 +18,6 @@ class Index(Resource):
         dc_product = args['dc_product']
         if s3_pattern is None:
             abort(400, message="no s3 pattern defined")
-        index_task = send_s3_urls_to_sqs.apply_async(args=[s3_pattern, dc_product, sqs_url])
+        index_task = index_from_s3.apply_async(args=[s3_pattern, dc_product])
         api = Api
-        return "{}", 202, {"Location": api.url_for(api(current_app), Tasks, task_id=index_task.id)}
+        return "{}", 202, {"Location": api.url_for(api(current_app), Task, task_id=index_task.id)}

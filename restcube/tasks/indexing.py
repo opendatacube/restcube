@@ -15,6 +15,9 @@ from odc.aws._find import parse_query, norm_predicate
 from odc.ppt import future_results
 
 from restcube.factory import make_celery
+from celery.result import AsyncResult
+from celery import current_app
+from restcube.datacube.api import add_datasets
 
 celery = make_celery()
 
@@ -143,6 +146,27 @@ def s3_find(uri, skip_check):
 
     yield from stream
 
+@celery.task(bind=True, acks_late=True)
+def index_in_dc(self, url, product):
+    add_datasets([url], product)
+
+
+@celery.task(bind=True)
+def index_from_s3(self, s3_pattern, dc_product):
+    s3_urls = s3_find(s3_pattern, False)
+
+    state = {"last_processed": "", "count": 0}
+    count = 0
+    for s3_url in s3_urls:
+
+        index_in_dc.apply_async(args=[s3_url.url, dc_product])
+        count = count + 1
+        state = {"type": "index","last_processed": s3_url.url, "count": count}
+        print(state)
+        self.update_state(state="PROGRESS", meta=state)
+
+    return state
+
 
 @celery.task(bind=True)
 def send_s3_urls_to_sqs(self, s3_pattern, dc_product, sqs_url):
@@ -171,6 +195,40 @@ def send_s3_urls_to_sqs(self, s3_pattern, dc_product, sqs_url):
             future.result()
         count = count + 1
         state = {"type": "index","last_processed": s3_url.url, "count": count}
+        print(state)
         self.update_state(state="PROGRESS", meta=state)
 
     return state
+
+def get_all_tasks():
+    all_tasks = current_app.tasks
+    return all_tasks
+
+
+
+def get_task(task_id):
+    task = AsyncResult(task_id, app=celery)
+    if not task:
+        return '{"error": "Error finding task"}', 500
+    if task.state == "PENDING":
+        response = {
+            "state": task.state,
+            "processed": 0,
+        }
+    elif task.state != "FAILURE":
+        response = {
+            "state": task.state,
+            "processed": task.info.get("count"),
+            "last_processed": task.info.get("last_processed")
+        }
+    else:
+        response = {
+            "state": task.state,
+            # "processed": task.info.get("count"),
+            # "last_processed": task.info.get("last_processed"),
+            "error": str(task.info)
+        }
+    return response
+
+def delete_task(task_id):
+    celery.control.revoke(task_id, terminate=True)

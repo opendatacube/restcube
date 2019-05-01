@@ -21,6 +21,8 @@ class Product(Resource):
         if p is not None:
             ret = { "metadata": p.to_dict() }
 
+        print(ret)
+
         return ret, 200
 
     def put(self, name):
