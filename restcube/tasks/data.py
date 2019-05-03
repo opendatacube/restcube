@@ -48,10 +48,9 @@ class _GetData(celery.Task):
         Is a Celery Task
         """
         def callback(processed, total):
-            print("hello! updating now")
             self.update_state(state="PROGRESS", meta={
                 "processed": processed,
-                "total": total    
+                "total": total
             })
 
         data = load_data(progress_cbk=callback, **kwargs)
