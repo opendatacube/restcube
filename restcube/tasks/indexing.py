@@ -16,7 +16,6 @@ from odc.ppt import future_results
 
 from restcube.factory import make_celery
 from celery.result import AsyncResult
-from celery import current_app
 from restcube.datacube.api import add_datasets
 
 celery = make_celery()
@@ -199,36 +198,3 @@ def send_s3_urls_to_sqs(self, s3_pattern, dc_product, sqs_url):
         self.update_state(state="PROGRESS", meta=state)
 
     return state
-
-def get_all_tasks():
-    all_tasks = current_app.tasks
-    return all_tasks
-
-
-
-def get_task(task_id):
-    task = AsyncResult(task_id, app=celery)
-    if not task:
-        return '{"error": "Error finding task"}', 500
-    if task.state == "PENDING":
-        response = {
-            "state": task.state,
-            "processed": 0,
-        }
-    elif task.state != "FAILURE":
-        response = {
-            "state": task.state,
-            "processed": task.info.get("count"),
-            "last_processed": task.info.get("last_processed")
-        }
-    else:
-        response = {
-            "state": task.state,
-            # "processed": task.info.get("count"),
-            # "last_processed": task.info.get("last_processed"),
-            "error": str(task.info)
-        }
-    return response
-
-def delete_task(task_id):
-    celery.control.revoke(task_id, terminate=True)

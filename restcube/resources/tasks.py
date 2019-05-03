@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from restcube.tasks.indexing import get_task, delete_task, get_all_tasks
+from restcube.tasks import get_task, delete_task, get_all_tasks
 
 class Task(Resource):
 

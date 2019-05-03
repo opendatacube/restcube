@@ -3,6 +3,8 @@ from restcube.datacube.api import load_data
 
 from datacube.drivers.netcdf import write_dataset_to_netcdf
 
+from celery import Task
+
 celery = make_celery()
 
 import boto3
@@ -35,31 +37,40 @@ def _uploadToS3(filename, data, mimetype):
     )
     return url
 
-@celery.task(bind=True)
-def get_data(self, **kwargs):
 
-    def callback(processed, total):
-        self.update_state(state="PROGRESS", meta={
-            "processed": processed,
-            "total": total    
-        })
+class _GetData(celery.Task):
+
+    name = "restcube.tasks.data.getData"
+
+    def run(self, **kwargs):
+        """
+        Performs logic of getting data and uploading a NetCDF file to S3
+        Is a Celery Task
+        """
+        def callback(processed, total):
+            print("hello! updating now")
+            self.update_state(state="PROGRESS", meta={
+                "processed": processed,
+                "total": total    
+            })
+
+        data = load_data(progress_cbk=callback, **kwargs)
+
+        filename = f'{self.request.id}.nc'
+
+        write_dataset_to_netcdf(data, filename)
+
+        url = ""
+        with open(filename, 'rb') as f:
+            url = _uploadToS3(f'{self.request.id}/{filename}', f, 'application/x-netcdf4')
+
+        os.remove(filename)
+
+        return url
+
+celery.tasks.register(_GetData)
+
+get_data = celery.tasks[_GetData.name]
 
 
-    print(kwargs)
-
-    data = load_data(progress_cbk=callback, **kwargs)
-
-    print(data)
-
-    filename = f'{self.request.id}.nc'
-
-    write_dataset_to_netcdf(data, filename)
-
-    url = ""
-    with open(filename, 'rb') as f:
-        url = _uploadToS3(f'{self.request.id}/{filename}', f, 'application/x-netcdf4')
-
-    os.remove(filename)
-
-    return url
 
