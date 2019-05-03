@@ -15,6 +15,9 @@ putargparser.add_argument('allow_unsafe', type=bool, default=False, help="If tru
 class Product(Resource):
 
     def get(self, name):
+        """Returns product metadata document based on the name of the product.
+           If multiple products have the same name, will return only a single product.
+        """
         ret = dict()
         products = list(get_products(**{"name": name}))
         p = products[0]
@@ -26,6 +29,10 @@ class Product(Resource):
         return ret, 200
 
     def put(self, name):
+        """Attempts to update the product specified by name.
+           Uses a provided product metadata definition file specified by a URL
+           Will only perform unsafe modifications if allow_unsafe is true
+        """
         import urllib.request
         args = putargparser.parse_args()
 
@@ -47,12 +54,14 @@ class Product(Resource):
 
 class Products(Resource):
     def get(self):
+        """Returns a list of product metadata documents for all products in the datacube"""
         products = []
         for product in get_products():
             products.append(product.to_dict())
         return {"count": len(products), "products": products}, 200
 
     def post(self):
+        """Adds a product to the database based on a product metadata definition file specified by a URL"""
         args = postargparser.parse_args()
         ret = list()
         for product in add_products(args['product_definition_url']):

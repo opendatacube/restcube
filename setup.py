@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='windsweeper',
+    name='restcube',
     version='0.1.0',
     description="Datacube REST Services",
     author="Open Data Cube",

@@ -1,22 +1,31 @@
-from flask_restful import reqparse, abort, Resource
+from flask_restful import reqparse, abort, Resource, request
 
 from datacube import Datacube
 from restcube.datacube.api import get_datasets, add_datasets
 from datacube.index.hl import Doc2Dataset
 from yaml import safe_load
 
+from webargs import fields, validate
+from webargs.flaskparser import parser
 
-getargparser = reqparse.RequestParser()
-getargparser.add_argument('product', type=str, required=False, help="Name of the Datacube product")
-getargparser.add_argument('url', type=str, required=False, help="URL of dataset definition")
 
-postargparser = getargparser.copy()
+datasets_args = {
+    "product": fields.Str(required=False),
+    "url": fields.Str(required=False),
+    "time": fields.DelimitedList(fields.Str(), required=False),
+    "x": fields.DelimitedList(fields.Float(), required=False),
+    "y": fields.DelimitedList(fields.Float(), required=False),
+    "crs": fields.Str(required=False)
+}
+
+postargparser = reqparse.RequestParser()
+postargparser.add_argument('product', type=str, required=False, help="Name of the Datacube product")
 postargparser.add_argument('dataset_definition_urls', action="append", help="List of urls containing dataset definitions")
-postargparser.remove_argument('url')
 
 class Dataset(Resource):
 
     def get(self, ds_id):
+        """Returns a dataset metadata documents (if found, otherwise, None) for the dataset with the specified dataset ID"""
         ret = dict()
         try:
             ds = list(get_datasets(id=ds_id))
@@ -31,18 +40,19 @@ class Dataset(Resource):
 class Datasets(Resource):
 
     def get(self):
-        args = getargparser.parse_args()
-        query = dict()
-        for k, v in args.items():
-            if v is not None:
-                query[k] = v
+        """Uses the args to construct a Datacube query to search for datasets.
+           Returns an array of dataset metadata documents.
+        """
+        args = parser.parse(datasets_args, request)
 
-        ds = get_datasets(**query)
+        ds = get_datasets(**args)
         datasets = [ d.metadata_doc for d in ds ]
         print (datasets)
         return datasets, 200
 
     def post(self):
+        """Attempts to add datasets to the datacube based on a product and dataset metadata urls
+        """
         args = postargparser.parse_args()
         product = args['product']
         urls = args['dataset_definition_urls']

@@ -1,12 +1,13 @@
-from flask import request, abort
+from flask import request
 from flask_restful import Api
 from restcube.resources.products import Product, Products
 from restcube.resources.datasets import Dataset, Datasets
 from restcube.resources.datacube import Datacube
 from restcube.resources.tasks import Task, Tasks
 from restcube.resources.index import Index
-import os
+from restcube.resources.data import Data
 from restcube.factory import create_app
+import os
 
 app = create_app()
 api = Api(app)
@@ -19,6 +20,7 @@ api.add_resource(Datacube, "/datacube")
 api.add_resource(Index, "/index/", "/index")
 api.add_resource(Task, "/tasks/<string:task_id>")
 api.add_resource(Tasks, "/tasks/")
+api.add_resource(Data, "/data/")
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", None)
 

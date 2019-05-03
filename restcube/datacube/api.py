@@ -1,4 +1,5 @@
 from datacube import Datacube
+from datacube.api.query import Query
 from datacube.index.hl import Doc2Dataset
 import validators
 import requests
@@ -6,6 +7,11 @@ from yaml import safe_load_all, safe_load
 
 import boto3
 from urllib.parse import urlparse
+
+def load_data(progress_cbk=None, **kwargs):
+    with Datacube() as dc:
+        data = dc.load(progress_cbk=progress_cbk, **kwargs)
+        return data
 
 
 def get_datasets(**kwargs):
@@ -24,7 +30,8 @@ def get_datasets(**kwargs):
             d_url = kwargs['url']
             yield from dc.index.datasets.get_datasets_for_location(d_url, mode="exact")
         else:
-            yield from dc.index.datasets.search(**kwargs)
+            query = Query(**kwargs)
+            yield from dc.index.datasets.search(**query.search_terms)
 
 
 def add_datasets(urls, product):

@@ -6,6 +6,7 @@ import re
 class Datacube(Resource):
 
     def get(self):
+        """Get the name of the database that the datacube is using and returns a dict"""
         with datacube.Datacube() as dc:
             connstr = str(dc)
             print(connstr)
