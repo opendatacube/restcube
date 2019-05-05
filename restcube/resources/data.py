@@ -7,13 +7,16 @@ from restcube.tasks.data import get_data
 
 
 datasets_args = {
-    "product": fields.Str(required=False),
-    "url": fields.Str(required=False),
-    "time": fields.DelimitedList(fields.Str(), required=False),
+    "product": fields.String(required=False),
+    "url": fields.String(required=False),
+    "time": fields.DelimitedList(fields.String(), required=False),
     "x": fields.DelimitedList(fields.Float(), required=False),
     "y": fields.DelimitedList(fields.Float(), required=False),
-    "crs": fields.Str(required=False),
-    "measurements": fields.DelimitedList(fields.Str(), required=False)
+    "crs": fields.String(required=False),
+    "measurements": fields.DelimitedList(fields.String(), required=False),
+    "output_crs": fields.String(required=False),
+    "resolution": fields.DelimitedList(fields.Float(), required=False),
+    "align": fields.DelimitedList(fields.Float(), required=False)
 }
 class Data(Resource):
     def get(self):
