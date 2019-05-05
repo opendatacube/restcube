@@ -41,12 +41,12 @@ class Datasets(Resource):
 
     def get(self):
         """Uses the args to construct a Datacube query to search for datasets.
-           Returns an array of dataset metadata documents.
+           Returns an array of dataset ids.
         """
         args = parser.parse(datasets_args, request)
 
         ds = get_datasets(**args)
-        datasets = [ d.metadata_doc for d in ds ]
+        datasets = [ d.id for d in ds ]
         print (datasets)
         return datasets, 200
 
