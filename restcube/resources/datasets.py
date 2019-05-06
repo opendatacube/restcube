@@ -30,7 +30,10 @@ class Dataset(Resource):
         try:
             ds = list(get_datasets(id=ds_id))
             d = ds[0]
-            ret = {"metadata": d.metadata_doc}
+            ret = {
+                "metadata": d.metadata_doc,
+                "locations": get_dataset_locations(ds_id)
+            }
         except ValueError:
             d = None
 
@@ -46,7 +49,7 @@ class Datasets(Resource):
         args = parser.parse(datasets_args, request)
 
         ds = get_datasets(**args)
-        datasets = [ d.id for d in ds ]
+        datasets = [ str(d.id) for d in ds ]
         print (datasets)
         return datasets, 200
 

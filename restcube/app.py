@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Api
 from restcube.resources.products import Product, Products
-from restcube.resources.datasets import Dataset, Datasets
+from restcube.resources.datasets import Dataset, Datasets, Locations
 from restcube.resources.datacube import Datacube
 from restcube.resources.tasks import Task, Tasks
 from restcube.resources.index import Index
@@ -21,6 +21,7 @@ api.add_resource(Index, "/index/", "/index")
 api.add_resource(Task, "/tasks/<string:task_id>")
 api.add_resource(Tasks, "/tasks/")
 api.add_resource(Data, "/data/")
+api.add_resource(Locations, "/datasets/<string:ds_id>/locations")
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", None)
 
