@@ -34,6 +34,10 @@ def get_datasets(**kwargs):
             yield from dc.index.datasets.search(**query.search_terms)
 
 
+def get_dataset_locations(ds_id):
+    with Datacube() as dc:
+        return dc.index.datasets.get_locations(ds_id)
+
 def add_datasets(urls, product):
     def get_protocol(url):
         parsed = urlparse(url)

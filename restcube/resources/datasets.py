@@ -1,7 +1,7 @@
 from flask_restful import reqparse, abort, Resource, request
 
 from datacube import Datacube
-from restcube.datacube.api import get_datasets, add_datasets
+from restcube.datacube.api import get_datasets, add_datasets, get_dataset_locations
 from datacube.index.hl import Doc2Dataset
 from yaml import safe_load
 
@@ -61,3 +61,11 @@ class Datasets(Resource):
         statuses = list(add_datasets(urls, product))
 
         return statuses, 200
+
+
+class Locations(Resource):
+
+    def get(self, ds_id):
+        locations = get_dataset_locations(ds_id)
+
+        return locations, 200

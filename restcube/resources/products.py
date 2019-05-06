@@ -22,9 +22,12 @@ class Product(Resource):
         products = list(get_products(**{"name": name}))
         p = products[0]
         if p is not None:
-            ret = { "metadata": p.to_dict() }
-
-        print(ret)
+            ret = {
+                "name": p.name,
+                "metadata": p.to_dict(),
+                "measurements": p.measurements,
+                "dimensions": p.dimensions
+            }
 
         return ret, 200
 
