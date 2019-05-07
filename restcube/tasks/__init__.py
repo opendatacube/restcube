@@ -1,12 +1,12 @@
 from celery.result import AsyncResult
-from celery import current_app
 from restcube.factory import make_celery
 
 celery = make_celery()
 
 def get_all_tasks():
     all_tasks = celery.tasks
-    return all_tasks
+    info = [{"id": k, "task": get_task(k)} for k in all_tasks.keys()]
+    return info
 
 def get_task(task_id):
     task = AsyncResult(task_id, app=celery)

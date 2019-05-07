@@ -1,9 +1,10 @@
-from flask_restful import Resource, request
-
+from flask_restful import Resource, request, Api
+from flask import current_app
 from webargs import fields
 from webargs.flaskparser import parser
 
 from restcube.tasks.data import get_data
+from restcube.resources.tasks import Task
 
 
 datasets_args = {
@@ -22,5 +23,5 @@ class Data(Resource):
     def get(self):
         args = parser.parse(datasets_args, request)
         data_task = get_data.apply_async(kwargs=args)
-
-        return data_task.id, 200
+        api = Api
+        return "{}", 202, {"Location": api.url_for(api(current_app), Task, task_id=data_task.id)}
