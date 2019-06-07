@@ -150,7 +150,8 @@ def index_in_dc(self, url, product):
     add_datasets([url], product)
 
 
-@celery.task(bind=True)
+# Indexing can take significant time, set 48hr limits
+@celery.task(bind=True, time_limit=172800, soft_time_limit=172800)
 def index_from_s3(self, s3_pattern, dc_product):
     s3_urls = s3_find(s3_pattern, False)
 
