@@ -45,7 +45,7 @@ class Product(Resource):
 
             for doc in docs:
                 product = dc.index.products.from_doc(doc)
-                if product['name'] == name:
+                if product.name == name:
                     try:
                         product = dc.index.products.update(
                                     product, allow_unsafe_updates=args['allow_unsafe'])
