@@ -38,8 +38,12 @@ def _uploadToS3(filename, data, mimetype):
     return url
 
 
-class _GetData(celery.Task):
 
+class _GetData(celery.Task):
+    """
+    Celery Task Class definition for getting an xarray from a datacube
+    and uploading a netCDF file with the xarray to S3
+    """
     name = "restcube.tasks.data.getData"
 
     def run(self, **kwargs):

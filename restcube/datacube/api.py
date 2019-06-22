@@ -1,3 +1,5 @@
+# Contains Datacube API wrapper 
+# Functions which require a datacube to be created should be placed in this file
 from datacube import Datacube
 from datacube.api.query import Query
 from datacube.index.hl import Doc2Dataset
@@ -8,12 +10,19 @@ from yaml import safe_load_all, safe_load
 import boto3
 from urllib.parse import urlparse
 
+# Perform a DC load based on kwargs passed to this function
+# and returns an xarray based on this load
 def load_data(progress_cbk=None, **kwargs):
     with Datacube() as dc:
         data = dc.load(progress_cbk=progress_cbk, **kwargs)
         return data
 
 
+# Retrieves DC dataset metadata for datasets based on query
+# passed in by kwargs.
+# If kwargs contains 'id' or 'url', performs different search
+# based on id or url.
+# Function should yield results
 def get_datasets(**kwargs):
     with Datacube() as dc:
         # Special case for id specified
@@ -34,10 +43,14 @@ def get_datasets(**kwargs):
             yield from dc.index.datasets.search(**query.search_terms)
 
 
+# Retrieves DC dataset locations (i.e. URL to dataset YAML or filepath)
+# for a dataset given a dataset id
 def get_dataset_locations(ds_id):
     with Datacube() as dc:
         return dc.index.datasets.get_locations(ds_id)
 
+# Adds datasets based on dataset metadata URLs and a product
+# Supports S3 URLs and HTTP
 def add_datasets(urls, product):
     def get_protocol(url):
         parsed = urlparse(url)
@@ -77,7 +90,7 @@ def add_datasets(urls, product):
                 d = dc.index.datasets.add(dataset)
                 yield {"status": "indexed", "id": d.metadata.id, "url": url}
 
-
+# Retrieves DC product metadata based on a query specified in kwargs
 def get_products(**kwargs):
     with Datacube() as dc:
         # Name is a special case
@@ -86,7 +99,7 @@ def get_products(**kwargs):
         else:
             yield from dc.index.products.search(**kwargs)
 
-
+# Given a datacube product definition URL, add the product or products in the URL
 def add_products(product_definition_url):
     with Datacube() as dc:
         doc_request = requests.get(product_definition_url)

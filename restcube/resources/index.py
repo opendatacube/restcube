@@ -11,8 +11,13 @@ postargparser.add_argument('dc_product', type=str, required=False, help="DC Prod
 sqs_url = os.getenv("SQS_QUEUE_URL", "")
 
 class Index(Resource):
-
+    """
+    The Index resource refers to a 'virtual' resource around indexing data into the datacube
+    """
     def post(self):
+        """
+        Creates a task to index data into the datacube
+        """
         args = postargparser.parse_args()
         s3_pattern = args['pattern']
         dc_product = args['dc_product']

@@ -23,7 +23,9 @@ postargparser.add_argument('product', type=str, required=False, help="Name of th
 postargparser.add_argument('dataset_definition_urls', action="append", help="List of urls containing dataset definitions")
 
 class Dataset(Resource):
-
+    """
+    The Dataset resource refers to singular datasets which can be GETed by ID
+    """
     def get(self, ds_id):
         """Returns a dataset metadata documents (if found, otherwise, None) for the dataset with the specified dataset ID"""
         ret = dict()
@@ -41,7 +43,10 @@ class Dataset(Resource):
 
 
 class Datasets(Resource):
-
+    """
+    The Datasets resource refers to groups of datasets which can be queried for by GET.
+    Datasets can also be added to the datacube using a POST
+    """
     def get(self):
         """Uses the args to construct a Datacube query to search for datasets.
            Returns an array of dataset ids.
@@ -67,7 +72,9 @@ class Datasets(Resource):
 
 
 class Locations(Resource):
-
+    """
+    Locations resources are the locations associated with a dataset
+    """
     def get(self, ds_id):
         locations = get_dataset_locations(ds_id)
 

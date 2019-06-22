@@ -20,6 +20,9 @@ from restcube.datacube.api import add_datasets
 
 celery = make_celery()
 
+# Adapted from dea-proto
+# Uses aiobotocore and can push messages to SQS
+# designed to be used in conjunction with aiobotocore S3 find
 class SQSProducer(object):
     def __init__(self,
                  region_name=None):
@@ -62,6 +65,8 @@ class SQSProducer(object):
             QueueUrl=sqs_url,
             MessageBody=message)
 
+# Adapted from dea-proto
+# Uses aiobotocore to search for files on S3
 def s3_find(uri, skip_check):
     """ List files on S3 bucket.
 
@@ -145,11 +150,14 @@ def s3_find(uri, skip_check):
 
     yield from stream
 
+# Celery task for adding dataset to a datacube index
 @celery.task(bind=True, acks_late=True)
 def index_in_dc(self, url, product):
     add_datasets([url], product)
 
 
+# This celery task will search an S3 URL pattern (s3://<bucket>/<path>/**/*.yaml)
+# and attempt to index the urls that are found
 # Indexing can take significant time, set 48hr limits
 @celery.task(bind=True, time_limit=172800, soft_time_limit=172800)
 def index_from_s3(self, s3_pattern, dc_product):
@@ -167,7 +175,8 @@ def index_from_s3(self, s3_pattern, dc_product):
 
     return state
 
-
+# This celery task will search an S3 URL pattern (s3://<bucket>/<path>/**/*.yaml)
+# and attempt to push SQS messages with the S3 urls to the specified SQS queue
 @celery.task(bind=True)
 def send_s3_urls_to_sqs(self, s3_pattern, dc_product, sqs_url):
 

@@ -1,0 +1,11 @@
+flask
+flask-restful
+boto3
+requests
+validators
+celery[redis]
+furl
+webargs
+aiobotocore[awscli]
+"git+https://github.com/opendatacube/dea-proto.git"
+"git+https://github.com/opendatacube/dea-proto.git#egg=odc_apps_cloud&subdirectory=apps/cloud"

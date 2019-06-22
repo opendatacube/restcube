@@ -20,7 +20,14 @@ datasets_args = {
     "align": fields.DelimitedList(fields.Float(), required=False)
 }
 class Data(Resource):
+    """
+    Data Resource refers to raster data that can be retrieved from the associated datacube.
+    """
     def get(self):
+        """
+        GETs data from the datacube.
+        Will create a new data retrieval task
+        """
         args = parser.parse(datasets_args, request)
         data_task = get_data.apply_async(kwargs=args)
         api = Api

@@ -25,6 +25,8 @@ api.add_resource(Locations, "/datasets/<string:ds_id>/locations")
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", None)
 
+# For authenticated requests check the request origin against a list of allowed
+# origins provided by environment variables
 @app.after_request
 def after_request(response):
     origin = request.headers.get("Origin", None)
