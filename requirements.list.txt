@@ -7,5 +7,4 @@ celery[redis]
 furl
 webargs
 aiobotocore[awscli]
-"git+https://github.com/opendatacube/dea-proto.git"
-"git+https://github.com/opendatacube/dea-proto.git#egg=odc_apps_cloud&subdirectory=apps/cloud"
+--extra-index-url="https://packages.dea.gadevs.ga" odc-apps-cloud
