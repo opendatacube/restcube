@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_restful import reqparse, abort, Resource, request
 
 from datacube import Datacube
@@ -22,6 +24,37 @@ postargparser = reqparse.RequestParser()
 postargparser.add_argument('product', type=str, required=False, help="Name of the Datacube product")
 postargparser.add_argument('dataset_definition_urls', action="append", help="List of urls containing dataset definitions")
 
+
+class Datasets(Resource):
+    """
+    The Datasets resource refers to groups of datasets which can be queried for by GET.
+    Datasets can also be added to the datacube using a POST
+    """
+    def get(self):
+        """Uses the args to construct a Datacube query to search for datasets.
+           Returns an array of dataset ids.
+        """
+        args = parser.parse(datasets_args, request)
+
+        ds = get_datasets(**args)
+        datasets = [ str(d.id) for d in ds ]
+        print (datasets)
+        return datasets, 200
+
+
+    def post(self):
+        """Attempts to add datasets to the datacube based on a product and dataset metadata urls
+        """
+        args = postargparser.parse_args()
+        product = args['product']
+        urls = args['dataset_definition_urls']
+        print(f"product: {product} urls: {urls}")
+
+        statuses = list(add_datasets(urls, product))
+
+        return statuses, 200
+
+
 class Dataset(Resource):
     """
     The Dataset resource refers to singular datasets which can be GETed by ID
@@ -40,35 +73,6 @@ class Dataset(Resource):
             d = None
 
         return ret, 200
-
-
-class Datasets(Resource):
-    """
-    The Datasets resource refers to groups of datasets which can be queried for by GET.
-    Datasets can also be added to the datacube using a POST
-    """
-    def get(self):
-        """Uses the args to construct a Datacube query to search for datasets.
-           Returns an array of dataset ids.
-        """
-        args = parser.parse(datasets_args, request)
-
-        ds = get_datasets(**args)
-        datasets = [ str(d.id) for d in ds ]
-        print (datasets)
-        return datasets, 200
-
-    def post(self):
-        """Attempts to add datasets to the datacube based on a product and dataset metadata urls
-        """
-        args = postargparser.parse_args()
-        product = args['product']
-        urls = args['dataset_definition_urls']
-        print(f"product: {product} urls: {urls}")
-
-        statuses = list(add_datasets(urls, product))
-
-        return statuses, 200
 
 
 class Locations(Resource):

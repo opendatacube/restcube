@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import request
 from flask_restful import Api
 from restcube.resources.products import Product, Products
@@ -12,13 +14,13 @@ import os
 app = create_app()
 api = Api(app)
 
-api.add_resource(Product, "/products/<string:name>")
+api.add_resource(Product, "/product/<string:name>")
 api.add_resource(Products, "/products", "/products/")
 api.add_resource(Dataset, "/datasets/<string:ds_id>")
 api.add_resource(Datasets, "/datasets", "/datasets/")
 api.add_resource(Datacube, "/datacube")
 api.add_resource(Index, "/index/", "/index")
-api.add_resource(Task, "/tasks/<string:task_id>")
+api.add_resource(Task, "/task/<string:task_id>")
 api.add_resource(Tasks, "/tasks/")
 api.add_resource(Data, "/data/")
 api.add_resource(Locations, "/datasets/<string:ds_id>/locations")

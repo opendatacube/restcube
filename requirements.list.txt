@@ -5,6 +5,8 @@ requests
 validators
 celery[redis]
 furl
+flask-redis
 webargs
 aiobotocore[awscli]
 --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-cloud
+--extra-index-url="https://packages.dea.gadevs.ga" odc-apps-dc-tools

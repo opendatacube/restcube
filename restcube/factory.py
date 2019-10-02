@@ -1,11 +1,16 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask
-from celery import Celery
 import os
-from furl import furl
+
+from flask_redis import FlaskRedis
+from celery import Celery
+#from furl import furl
 
 
 def create_app():
     app = Flask('restcube')
+    # redis_client.init_app(app)
     return app
 
 def make_celery(app=None):
@@ -40,3 +45,4 @@ def make_celery(app=None):
 
     celery.Task = ContextTask
     return celery
+

@@ -8,10 +8,11 @@ RUN pip3 install -U pip && rm -rf $HOME/.cache/pip
 RUN pip3 uninstall -y boto3  && rm -rf $HOME/.cache/pip
 
 RUN pip3 install flask flask-restful gunicorn boto3 requests validators \
-  gevent aiobotocore[awscli] celery[redis] furl webargs && rm -rf $HOME/.cache/pip
+  gevent aiobotocore[awscli] celery[redis] furl flask-redis webargs && rm -rf $HOME/.cache/pip
 
 RUN pip3 install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-cloud
 
+RUN pip install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-dc-tools
 
 WORKDIR /opt/odc/restcube
 ADD . .

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_restful import Resource
 from restcube.tasks import get_task, delete_task, get_all_tasks
 

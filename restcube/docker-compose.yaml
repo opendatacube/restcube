@@ -1,0 +1,41 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+
+  redis:
+    image: 'redis:3.0-alphine'
+    command: redis-server --requirepass devpassword
+    volumes:
+      - 'redis:/data'
+    ports:
+      - '6379:6379'
+
+  restcube:
+    image: opendatacube/restcube:latest
+    depends_on:
+      - postgresql
+    ports:
+      - "8000:8000"
+    environment:
+      DB_DATABASE: test
+      DB_HOSTNAME: postgresql
+      DB_USERNAME: test
+      DB_PASSWORD: test
+      DB_PORT: 5432
+      S3_RESULT_BUCKET: ''
+      REDIS_PASSWORD: 'devpassword'
+      CELERY_BROKER: 'redis://localhost:6379'
+      CELERY_RESULT_BACKEND: 'redis://localhost:6379'
+      ALLOWED_ORIGINS: ''
+      SQS_QUEUE_URL: ''
+      
+  celery:
+    build: .
+    command: celery -A restcube.tasks.indexing.celery worker && celery -A restcube.tasks.data.celery worker

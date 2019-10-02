@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from celery.result import AsyncResult
 from restcube.factory import make_celery
 

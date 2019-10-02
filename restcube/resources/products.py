@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_restful import reqparse, abort, Resource
 from yaml import safe_load_all
 

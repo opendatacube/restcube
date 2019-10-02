@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_restful import Resource, request, Api
 from flask import current_app
 from webargs import fields

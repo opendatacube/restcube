@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Contains Datacube API wrapper 
 # Functions which require a datacube to be created should be placed in this file
 from datacube import Datacube
@@ -52,6 +54,7 @@ def get_dataset_locations(ds_id):
 # Adds datasets based on dataset metadata URLs and a product
 # Supports S3 URLs and HTTP
 def add_datasets(urls, product):
+
     def get_protocol(url):
         parsed = urlparse(url)
         return parsed.scheme
@@ -68,6 +71,7 @@ def add_datasets(urls, product):
         resolver_args = dict()
         if product is not None:
             resolver_args['products'] = [product]
+
         resolver = Doc2Dataset(dc.index, **resolver_args)
         for url in urls:
             if get_protocol(url) == "s3":

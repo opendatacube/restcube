@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from restcube.factory import make_celery
 from restcube.datacube.api import load_data
 

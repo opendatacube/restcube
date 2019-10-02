@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_restful import Api, reqparse, abort, Resource
 from flask import current_app
 from restcube.tasks.indexing import index_from_s3
