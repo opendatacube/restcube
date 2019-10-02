@@ -10,15 +10,13 @@ services:
       POSTGRES_PASSWORD: test
 
   redis:
-    image: 'redis:3.0-alphine'
+    image: 'redis'
     command: redis-server --requirepass devpassword
-    volumes:
-      - 'redis:/data'
     ports:
       - '6379:6379'
 
   restcube:
-    image: opendatacube/restcube:latest
+    build: .
     depends_on:
       - postgresql
     ports:
@@ -31,8 +29,8 @@ services:
       DB_PORT: 5432
       S3_RESULT_BUCKET: ''
       REDIS_PASSWORD: 'devpassword'
-      CELERY_BROKER: 'redis://localhost:6379'
-      CELERY_RESULT_BACKEND: 'redis://localhost:6379'
+      CELERY_BROKER: 'redis://redis:6379'
+      CELERY_RESULT_BACKEND: 'redis://redis:6379'
       ALLOWED_ORIGINS: ''
       SQS_QUEUE_URL: ''
       

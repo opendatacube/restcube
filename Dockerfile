@@ -17,5 +17,7 @@ RUN pip install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-dc-t
 WORKDIR /opt/odc/restcube
 ADD . .
 
+RUN datacube system init
+
 EXPOSE 8000
 CMD gunicorn -b "0.0.0.0:8000" "restcube.app:app" 

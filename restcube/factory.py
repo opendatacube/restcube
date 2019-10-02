@@ -5,7 +5,7 @@ import os
 
 from flask_redis import FlaskRedis
 from celery import Celery
-#from furl import furl
+from furl import furl
 
 
 def create_app():
