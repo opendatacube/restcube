@@ -70,6 +70,5 @@ class Products(Resource):
         ret = list()
         for product in add_products(args['product_definition_url']):
             ret.append({"metadata": product.to_dict()})
-
         return ret, 200
 

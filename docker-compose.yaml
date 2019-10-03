@@ -21,19 +21,17 @@ services:
       - postgresql
     ports:
       - "8000:8000"
-    environment:
-      DB_DATABASE: test
-      DB_HOSTNAME: postgresql
-      DB_USERNAME: test
-      DB_PASSWORD: test
-      DB_PORT: 5432
-      S3_RESULT_BUCKET: ''
-      REDIS_PASSWORD: 'devpassword'
-      CELERY_BROKER: 'redis://redis:6379'
-      CELERY_RESULT_BACKEND: 'redis://redis:6379'
-      ALLOWED_ORIGINS: ''
-      SQS_QUEUE_URL: ''
+    env_file:
+      - restcube.env
       
-  celery:
+  indexing:
     build: .
-    command: celery -A restcube.tasks.indexing.celery worker && celery -A restcube.tasks.data.celery worker
+    command: celery -A restcube.tasks.indexing.celery worker
+    env_file:
+      - restcube.env
+
+  tasks:
+    build: .
+    command: celery -A restcube.tasks.data.celery worker
+    env_file:
+      - restcube.env
