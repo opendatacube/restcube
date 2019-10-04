@@ -3,11 +3,19 @@
 
 FROM opendatacube/datacube-core:latest
 
+# Make sure apt doesn't ask questions
+ENV DEBIAN_FRONTEND=noninteractive
+
+# install psql for database script
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client awscli curl jq\
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip3 install -U pip && rm -rf $HOME/.cache/pip
 
 RUN pip3 uninstall -y boto3  && rm -rf $HOME/.cache/pip
 
-RUN pip3 install flask flask-restful gunicorn boto3 requests validators \
+RUN pip3 install flask flask-restful psycopg2 gunicorn boto3 requests validators \
   gevent aiobotocore[awscli] celery[redis] furl flask-redis webargs && rm -rf $HOME/.cache/pip
 
 RUN pip3 install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-cloud
@@ -19,6 +27,9 @@ ADD . .
 
 EXPOSE 8000
 
-COPY ./restcube-entrypoint.sh /restcube-entrypoint.sh
-RUN chmod +x /restcube-entrypoint.sh
-ENTRYPOINT ["/restcube-entrypoint.sh"]
+CMD gunicorn -b "0.0.0.0:8000" "restcube.app:app"
+
+#COPY ./restcube-entrypoint.sh /restcube-entrypoint.sh
+#RUN chmod +x /restcube-entrypoint.sh
+
+#ENTRYPOINT ["/restcube-entrypoint.sh"]

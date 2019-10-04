@@ -2,15 +2,73 @@
 
 # Contains Datacube API wrapper 
 # Functions which require a datacube to be created should be placed in this file
+import os
+import subprocess
+import json
+from pathlib import Path
 from datacube import Datacube
+from datacube.index import index_connect
+
 from datacube.api.query import Query
 from datacube.index.hl import Doc2Dataset
+from datacube.config import LocalConfig
+
+
 import validators
 import requests
 from yaml import safe_load_all, safe_load
 
+import psycopg2
+from psycopg2 import sql
+import configparser
+
 import boto3
 from urllib.parse import urlparse
+
+
+# Create a database
+# init the database
+def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port, admin_username='test', admin_password='test'):
+
+    CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
+                     os.path.expanduser('~/.datacube.conf')]
+    p = subprocess.Popen(['datacube', 'system', 'init'], stdout=subprocess.PIPE)
+
+    child = p.communicate()[0]
+
+    proc = subprocess.Popen(['bash', str( Path(__file__).parent.parent/'scripts/create-db.sh')], stdout=subprocess.PIPE,
+                            env={'DB_USERNAME': new_db_user,
+                                 'DB_HOSTNAME': db_host,
+                                 'DB_PORT': db_port,
+                                 'ADMIN_USERNAME': admin_username,
+                                 'ADMIN_PASSWORD': admin_password,
+                                 'DB_DATABASE': new_db_name,
+                                 'DB_PASSWORD': new_db_password})
+
+    child = proc.communicate()[0]
+
+    config = configparser.RawConfigParser()
+    config.read(CONFIG_FILE_PATHS[1])
+
+    config.add_section(new_db_name)
+    config.set(new_db_name, 'DB_USERNAME', new_db_user)
+    config.set(new_db_name, 'DB_HOSTNAME', db_host)
+    config.set(new_db_name, 'DB_PORT', db_port)
+    config.set(new_db_name, 'DB_DATABASE', new_db_name)
+    config.set(new_db_name, 'DB_PASSWORD', new_db_password)
+
+
+    with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
+        config.write(configfile)
+    """
+    # init db
+    index = index_connect(LocalConfig.find(CONFIG_FILE_PATHS, env=new_db_name), validate_connection=False)
+    status = index.init_db()
+    """
+    
+    return child.decode('utf-8') 
+
+
 
 # Perform a DC load based on kwargs passed to this function
 # and returns an xarray based on this load

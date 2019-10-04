@@ -14,24 +14,24 @@ services:
     command: redis-server --requirepass devpassword
     ports:
       - '6379:6379'
+      
+  indexing:
+    build: .
+    env_file:
+      - restcube.env
+    command: celery -A restcube.tasks.indexing.celery worker
+
+  tasks:
+    build: .
+    env_file:
+      - restcube.env
+    command: celery -A restcube.tasks.data.celery worker
 
   restcube:
-    build: .
+    build: . 
+    env_file:
+      - restcube.env
     depends_on:
       - postgresql
     ports:
       - "8000:8000"
-    env_file:
-      - restcube.env
-      
-  indexing:
-    build: .
-    command: celery -A restcube.tasks.indexing.celery worker
-    env_file:
-      - restcube.env
-
-  tasks:
-    build: .
-    command: celery -A restcube.tasks.data.celery worker
-    env_file:
-      - restcube.env
