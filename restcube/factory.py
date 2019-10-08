@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask
 import os
+from flask import Flask
 
 from flask_redis import FlaskRedis
 from celery import Celery
@@ -11,6 +11,8 @@ from furl import furl
 def create_app():
     app = Flask('restcube')
     # redis_client.init_app(app)
+    cubeinit = 'datacube system init'
+    os.system(cubeinit)
     return app
 
 def make_celery(app=None):

@@ -12,7 +12,6 @@ from restcube.datacube.api import create_database
 
 postargparser = reqparse.RequestParser()
 postargparser.add_argument('new_db_name', type=str, required=True, help="the database to be created")
-postargparser.add_argument('new_db_user', type=str, required=True, help="new user for the new database")
 
 class Database(Resource):
 
@@ -24,8 +23,8 @@ class Database(Resource):
         args = postargparser.parse_args()
         ret = list()
         db_name = args['new_db_name']
-        db_user = args["new_db_user"]
-        db_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+        db_user = args['new_db_name'] + 'read'
+        db_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
 
         db_host = os.getenv("DB_HOSTNAME")
         db_port = os.getenv("DB_PORT")
