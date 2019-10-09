@@ -33,6 +33,7 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
                          os.path.expanduser('~/.datacube.conf')]
 
+    # create new section in datacube config - local testing
     config = configparser.RawConfigParser()
     config.read(CONFIG_FILE_PATHS[1])
 
@@ -43,10 +44,11 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     config.set(new_db_name, 'DB_DATABASE', new_db_name)
     config.set(new_db_name, 'DB_PASSWORD', new_db_password)
 
-
     with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
         config.write(configfile)
 
+
+    # Same as above but with kubenetes
 
     proc = subprocess.Popen(['bash', str( Path(__file__).parent.parent/'scripts/create-db.sh')], stdout=subprocess.PIPE,
                             env={'DB_USERNAME': new_db_user,
@@ -60,8 +62,8 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     child = proc.communicate()[0]
     # init db
     
-    print(LocalConfig.find(CONFIG_FILE_PATHS, env=new_db_name))
-    index = index_connect(LocalConfig.find(CONFIG_FILE_PATHS, env=new_db_name), validate_connection=False)
+    index = index_connect(LocalConfig.find(CONFIG_FILE_PATHS, env=new_db_name), # to be replace with kubenetes config
+                                           validate_connection=False)
     status = index.init_db(with_default_types=True)
     
     return status 
