@@ -1,6 +1,7 @@
 flask
 flask-restful
 flask-cors
+flask-cognito
 boto3
 requests
 validators

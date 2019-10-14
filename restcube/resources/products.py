@@ -5,7 +5,7 @@ from yaml import safe_load_all
 
 from datacube import Datacube
 from restcube.datacube.api import get_products, add_products
-
+from flask_cognito import CognitoAuth, cognito_auth_required, current_user, current_cognito_jwt
 
 postargparser = reqparse.RequestParser()
 postargparser.add_argument('product_definition_url', type=str, required=True, help="URL of product defintion YAML file")
@@ -15,6 +15,7 @@ putargparser.add_argument('allow_unsafe', type=bool, default=False, help="If tru
 
 class Product(Resource):
 
+    @cognito_auth_required
     def get(self, name):
         """Returns product metadata document based on the name of the product.
            If multiple products have the same name, will return only a single product.
@@ -57,6 +58,8 @@ class Product(Resource):
 
 
 class Products(Resource):
+
+    @cognito_auth_required
     def get(self):
         """Returns a list of product metadata documents for all products in the datacube"""
         products = []

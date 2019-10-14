@@ -13,8 +13,15 @@ def create_app():
     app = Flask('restcube')
     # redis_client.init_app(app)
     CORS(app)
-    cubeinit = 'datacube system init'
-    os.system(cubeinit)
+    # configuration
+    app.config['COGNITO_REGION']=os.getenv('COGNITO_REGION', None)
+    app.config['COGNITO_USERPOOL_ID']=os.getenv('COGNITO_USERPOOL_ID', None)
+    # optional
+    #'COGNITO_APP_CLIENT_ID': os.getenv('COGNITO_APP_CLIENT_ID', None),  # client ID you wish to verify user is authenticated against
+        
+    #'COGNITO_CHECK_TOKEN_EXPIRATION': False,  # disable token expiration checking for testing purposes
+    #'COGNITO_JWT_HEADER_NAME': os.getenv('COGNITO_JWT_HEADER_NAME', None),
+    #'COGNITO_JWT_HEADER_PREFIX': 'Bearer',
     return app
 
 def make_celery(app=None):

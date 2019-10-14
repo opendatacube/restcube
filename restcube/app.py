@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from flask import request
+from flask import request, jsonify
 from flask_restful import Api
 
 from restcube.resources.products import Product, Products
@@ -13,9 +13,14 @@ from restcube.resources.data import Data
 from restcube.resources.database import Database
 
 from restcube.factory import create_app
+from flask_cognito import CognitoAuth
+from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt
 
 app = create_app()
 api = Api(app)
+
+cogauth = CognitoAuth(app)    
+
 
 api.add_resource(Product, "/products/<string:name>")
 api.add_resource(Products, "/products", "/products/")
@@ -42,3 +47,4 @@ def after_request(response):
         header["Access-Control-Allow-Origin"] = origin
         header["Access-Control-Allow-Credentials"] = True
     return response
+
