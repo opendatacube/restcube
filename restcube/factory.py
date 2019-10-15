@@ -11,7 +11,6 @@ from furl import furl
 
 def create_app():
     app = Flask('restcube')
-    # redis_client.init_app(app)
     CORS(app)
     # configuration
     app.config['COGNITO_REGION']=os.getenv('COGNITO_REGION', None)

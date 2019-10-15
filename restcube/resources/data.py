@@ -2,6 +2,7 @@
 
 from flask_restful import Resource, request, Api
 from flask import current_app
+from flask_cognito import cognito_auth_required
 from webargs import fields
 from webargs.flaskparser import parser
 
@@ -25,6 +26,7 @@ class Data(Resource):
     """
     Data Resource refers to raster data that can be retrieved from the associated datacube.
     """
+    @cognito_auth_required
     def get(self):
         """
         GETs data from the datacube.

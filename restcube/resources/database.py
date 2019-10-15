@@ -3,7 +3,7 @@
 import os
 import random
 import string
-
+from flask_cognito import cognito_auth_required
 from flask import jsonify, request
 from flask_restful import reqparse, abort, Resource
 from yaml import safe_load_all
@@ -16,10 +16,12 @@ from restcube.datacube.api import create_database
 
 class Database(Resource):
 
+    @cognito_auth_required
     def get(self):
         """list all databases"""
         pass
 
+    @cognito_auth_required
     def post(self):
         """ Create a new database"""
         #args = postargparser.parse_args()

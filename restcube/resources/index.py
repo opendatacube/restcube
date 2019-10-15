@@ -2,6 +2,7 @@
 
 from flask_restful import Api, reqparse, abort, Resource
 from flask import current_app
+from flask_cognito import cognito_auth_required
 from restcube.tasks.indexing import index_from_s3
 from restcube.resources.tasks import Task
 import os
@@ -16,6 +17,7 @@ class Index(Resource):
     """
     The Index resource refers to a 'virtual' resource around indexing data into the datacube
     """
+    @cognito_auth_required
     def post(self):
         """
         Creates a task to index data into the datacube

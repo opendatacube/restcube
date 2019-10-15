@@ -19,9 +19,6 @@ from flask_cognito import cognito_auth_required, current_user, current_cognito_j
 app = create_app()
 api = Api(app)
 
-cogauth = CognitoAuth(app)    
-
-
 api.add_resource(Product, "/products/<string:name>")
 api.add_resource(Products, "/products", "/products/")
 api.add_resource(Dataset, "/datasets/<string:ds_id>")

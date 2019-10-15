@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask_restful import reqparse, abort, Resource, request
+from flask_cognito import cognito_auth_required
 
 from datacube import Datacube
 from restcube.datacube.api import get_datasets, add_datasets, get_dataset_locations
@@ -30,6 +31,7 @@ class Datasets(Resource):
     The Datasets resource refers to groups of datasets which can be queried for by GET.
     Datasets can also be added to the datacube using a POST
     """
+    @cognito_auth_required
     def get(self):
         """Uses the args to construct a Datacube query to search for datasets.
            Returns an array of dataset ids.
@@ -41,7 +43,7 @@ class Datasets(Resource):
         print (datasets)
         return datasets, 200
 
-
+    @cognito_auth_required
     def post(self):
         """Attempts to add datasets to the datacube based on a product and dataset metadata urls
         """
@@ -59,6 +61,8 @@ class Dataset(Resource):
     """
     The Dataset resource refers to singular datasets which can be GETed by ID
     """
+
+    @cognito_auth_required
     def get(self, ds_id):
         """Returns a dataset metadata documents (if found, otherwise, None) for the dataset with the specified dataset ID"""
         ret = dict()
@@ -79,6 +83,7 @@ class Locations(Resource):
     """
     Locations resources are the locations associated with a dataset
     """
+    @cognito_auth_required
     def get(self, ds_id):
         locations = get_dataset_locations(ds_id)
 
