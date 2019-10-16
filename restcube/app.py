@@ -4,6 +4,7 @@ import os
 from flask import request, jsonify
 from flask_restful import Api
 
+from restcube.resources.health import Health
 from restcube.resources.products import Product, Products
 from restcube.resources.datasets import Dataset, Datasets, Locations
 from restcube.resources.datacube import Datacube
@@ -18,6 +19,7 @@ from flask_cognito import CognitoAuth
 app = create_app()
 api = Api(app)
 
+api.add_resource(Health, "/health")
 api.add_resource(Product, "/products/<string:name>")
 api.add_resource(Products, "/products", "/products/")
 api.add_resource(Dataset, "/datasets/<string:ds_id>")
