@@ -5,6 +5,6 @@ import datacube
 import re
 
 class Health(Resource):
-
+    """no cognito requirement for loadbalancer health check"""
     def get(self):
         return {"health": 'healthy'}, 200

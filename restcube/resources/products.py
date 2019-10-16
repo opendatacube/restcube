@@ -5,13 +5,13 @@ from yaml import safe_load_all
 
 from datacube import Datacube
 from restcube.datacube.api import get_products, add_products
-from flask_cognito import CognitoAuth, cognito_auth_required, current_user, current_cognito_jwt
+from flask_cognito import cognito_auth_required
 
-postargparser = reqparse.RequestParser()
-postargparser.add_argument('product_definition_url', type=str, required=True, help="URL of product defintion YAML file")
+#postargparser = reqparse.RequestParser()
+#postargparser.add_argument('product_definition_url', type=str, required=True, help="URL of product defintion YAML file")
 
-putargparser = postargparser.copy()
-putargparser.add_argument('allow_unsafe', type=bool, default=False, help="If true, will allow unsafe product changes to be made")
+#putargparser = postargparser.copy()
+#putargparser.add_argument('allow_unsafe', type=bool, default=False, help="If true, will allow unsafe product changes to be made")
 
 class Product(Resource):
 
@@ -33,16 +33,18 @@ class Product(Resource):
 
         return ret, 200
 
+    @cognito_auth_required
     def put(self, name):
         """Attempts to update the product specified by name.
            Uses a provided product metadata definition file specified by a URL
            Will only perform unsafe modifications if allow_unsafe is true
         """
         import urllib.request
-        args = putargparser.parse_args()
+        # args = putargparser.parse_args()
+        json_data = request.get_json(force=True)
 
         with Datacube() as dc:
-            doc_request = urllib.request.urlopen(args['product_definition_url'])
+            doc_request = urllib.request.urlopen(json_data['product_definition_url'])
             docs = safe_load_all(doc_request.read())
 
             for doc in docs:
@@ -50,11 +52,11 @@ class Product(Resource):
                 if product.name == name:
                     try:
                         product = dc.index.products.update(
-                                    product, allow_unsafe_updates=args['allow_unsafe'])
+                                    product, allow_unsafe_updates=json_data['allow_unsafe'])
                     except ValueError:
                         abort(400, message="Cannot update {} without allowing unsafe modifications".format(name))
 
-        return {"message": "{} successfully updated in datacube".format(name)}, 200
+        return jsonify({"message": "{} successfully updated in datacube".format(name)})
 
 
 class Products(Resource):
@@ -65,13 +67,17 @@ class Products(Resource):
         products = []
         for product in get_products():
             products.append(product.to_dict())
-        return {"count": len(products), "products": products}, 200
+        return jsonify({"count": len(products), "products": products})
 
+
+    @cognito_auth_required
     def post(self):
         """Adds a product to the database based on a product metadata definition file specified by a URL"""
-        args = postargparser.parse_args()
+        # args = postargparser.parse_args()
+        json_data = request.get_json(force=True)
+
         ret = list()
-        for product in add_products(args['product_definition_url']):
+        for product in add_products(json_data['product_definition_url']):
             ret.append({"metadata": product.to_dict()})
-        return ret, 200
+        return jsonify({ret})
 

@@ -49,3 +49,6 @@ def after_request(response):
         header["Access-Control-Allow-Credentials"] = True
     return response
 
+@app.errorhandler(500)
+def internal_error(error):
+    return "Access denied: No token provided."
