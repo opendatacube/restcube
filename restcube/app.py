@@ -14,7 +14,6 @@ from restcube.resources.database import Database
 
 from restcube.factory import create_app
 from flask_cognito import CognitoAuth
-from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt
 
 app = create_app()
 api = Api(app)
@@ -32,6 +31,9 @@ api.add_resource(Data, "/data", "/data/")
 api.add_resource(Locations, "/datasets/<string:ds_id>/locations")
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", None)
+
+# initialize cognito
+cogauth = CognitoAuth(app)
 
 # For authenticated requests check the request origin against a list of allowed
 # origins provided by environment variables
