@@ -2,6 +2,7 @@
 
 from flask_restful import reqparse, abort, Resource
 from yaml import safe_load_all
+from flask import jsonify, request
 
 from datacube import Datacube
 from restcube.datacube.api import get_products, add_products
