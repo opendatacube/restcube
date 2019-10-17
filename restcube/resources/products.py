@@ -3,7 +3,7 @@
 from flask_restful import reqparse, abort, Resource
 from yaml import safe_load_all
 from flask import jsonify, request
-
+import json
 from datacube import Datacube
 from restcube.datacube.api import get_products, add_products
 from flask_cognito import cognito_auth_required
@@ -81,5 +81,5 @@ class Products(Resource):
         ret = list()
         for product in add_products(json_data['product_definition_url']):
             ret.append({"metadata": product.to_dict()})
-        return ret, 200
+        return json.dump(ret)
 
