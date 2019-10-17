@@ -81,5 +81,5 @@ class Products(Resource):
         ret = list()
         for product in add_products(json_data['product_definition_url']):
             ret.append({"metadata": product.to_dict()})
-        return json.dump(ret)
+        return json.dumps(ret)
 
