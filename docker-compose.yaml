@@ -18,19 +18,19 @@ services:
   indexing:
     build: .
     env_file:
-      - restcube.env
+      - .env
     command: celery -A restcube.tasks.indexing.celery worker
 
   tasks:
     build: .
     env_file:
-      - restcube.env
+      - .env
     command: celery -A restcube.tasks.data.celery worker
 
   restcube:
     build: . 
     env_file:
-      - restcube.env
+      - .env
     depends_on:
       - postgresql
     ports:
