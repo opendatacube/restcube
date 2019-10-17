@@ -75,9 +75,7 @@ class Products(Resource):
     @cognito_auth_required
     def post(self):
         """Adds a product to the database based on a product metadata definition file specified by a URL"""
-        # args = postargparser.parse_args()
-        json_data = request.get_json(force=True)
-
+        json_data= request.get_json(force=True) 
         ret = list()
         for product in add_products(json_data['product_definition_url']):
             ret.append({"metadata": product.to_dict()})
