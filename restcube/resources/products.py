@@ -17,12 +17,13 @@ from flask_cognito import cognito_auth_required
 class Product(Resource):
 
     @cognito_auth_required
-    def get(self, name):
+    def get(self):
         """Returns product metadata document based on the name of the product.
            If multiple products have the same name, will return only a single product.
         """
+        json_data = request.get_json(force=True)
         ret = dict()
-        products = list(get_products(**{"name": name}))
+        products = list(get_products(**{"name": json_data["name"]}))
         p = products[0]
         if p is not None:
             ret = {
@@ -35,7 +36,7 @@ class Product(Resource):
         return ret, 200
 
     @cognito_auth_required
-    def put(self, name):
+    def put(self):
         """Attempts to update the product specified by name.
            Uses a provided product metadata definition file specified by a URL
            Will only perform unsafe modifications if allow_unsafe is true
@@ -43,7 +44,7 @@ class Product(Resource):
         import urllib.request
         # args = putargparser.parse_args()
         json_data = request.get_json(force=True)
-
+        name = json_data["name"]
         with Datacube() as dc:
             doc_request = urllib.request.urlopen(json_data['product_definition_url'])
             docs = safe_load_all(doc_request.read())
