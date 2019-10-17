@@ -40,8 +40,8 @@ class Datasets(Resource):
 
         ds = get_datasets(**args)
         datasets = [ str(d.id) for d in ds ]
-        print (datasets)
         return datasets, 200
+
 
     @cognito_auth_required
     def post(self):
