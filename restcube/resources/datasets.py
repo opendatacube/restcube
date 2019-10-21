@@ -11,7 +11,7 @@ from yaml import safe_load
 from webargs import fields, validate
 from webargs.flaskparser import parser
 
-
+"""
 datasets_args = {
     "product": fields.Str(required=False),
     "url": fields.Str(required=False),
@@ -24,7 +24,7 @@ datasets_args = {
 postargparser = reqparse.RequestParser()
 postargparser.add_argument('product', type=str, required=False, help="Name of the Datacube product")
 postargparser.add_argument('dataset_definition_urls', action="append", help="List of urls containing dataset definitions")
-
+"""
 
 class Datasets(Resource):
     """
