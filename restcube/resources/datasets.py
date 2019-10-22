@@ -37,9 +37,10 @@ class Datasets(Resource):
            Returns an array of dataset ids.
         """
         args = {}
-        ds = get_datasets(**args)
-        datasets = [ str(d.id) for d in ds ]
-        return datasets
+        return ['aaaa', 'bbb']
+        #ds = get_datasets(**args)
+        #datasets = [ str(d.id) for d in ds ]
+        #return datasets
 
 
     @cognito_auth_required
