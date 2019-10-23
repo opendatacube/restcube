@@ -11,7 +11,6 @@ from yaml import safe_load
 from webargs import fields, validate
 from webargs.flaskparser import parser
 
-"""
 datasets_args = {
     "product": fields.Str(required=False),
     "url": fields.Str(required=False),
@@ -24,7 +23,6 @@ datasets_args = {
 postargparser = reqparse.RequestParser()
 postargparser.add_argument('product', type=str, required=False, help="Name of the Datacube product")
 postargparser.add_argument('dataset_definition_urls', action="append", help="List of urls containing dataset definitions")
-"""
 
 class Datasets(Resource):
     """
@@ -36,11 +34,10 @@ class Datasets(Resource):
         """Uses the args to construct a Datacube query to search for datasets.
            Returns an array of dataset ids.
         """
-        args = {}
-        return ['aaaa', 'bbb']
-        #ds = get_datasets(**args)
-        #datasets = [ str(d.id) for d in ds ]
-        #return datasets
+        args = parser.parse(datasets_args, request)
+        ds = get_datasets(**args)
+        datasets = [ str(d.id) for d in ds ]
+        return datasets
 
 
     @cognito_auth_required
@@ -53,7 +50,7 @@ class Datasets(Resource):
 
         statuses = list(add_datasets([urls], product))
 
-        return json.dumps(statuses)
+        return statuses
 
 
 class Dataset(Resource):
