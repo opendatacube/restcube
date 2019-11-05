@@ -13,7 +13,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip3 install -U pip && rm -rf $HOME/.cache/pip
 
-RUN pip3 uninstall -y boto3  && rm -rf $HOME/.cache/pip
+#RUN pip3 uninstall -y boto3  && rm -rf $HOME/.cache/pip
+
+RUN pip3 install --upgrade pip \
+    && rm -rf $HOME/.cache/pip
+
+RUN pip install -U 'aiobotocore[awscli,boto3]' \
+    && rm -rf $HOME/.cache/pip
 
 RUN pip3 install flask flask-restful flask-cors flask-cognito psycopg2 gunicorn boto3 requests validators \
   gevent aiobotocore[awscli] celery[redis] furl flask-redis webargs && rm -rf $HOME/.cache/pip
