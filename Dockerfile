@@ -29,9 +29,10 @@ RUN pip3 install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-clo
 RUN pip install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-dc-tools
 
 # prepare restcube for database creation
+WORKDIR /opt/odc
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-RUN chmod +x ./kubectl
-RUN mv ./kubectl /usr/local/bin
+RUN chmod +x /opt/odc/kubectl
+RUN mv /opt/odc/kubectl /usr/local/bin
 
 WORKDIR /opt/odc/restcube
 ADD . .
