@@ -29,7 +29,7 @@ RUN pip3 install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-clo
 RUN pip install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-dc-tools
 
 # prepare restcube for database creation
-RUN  curl -L https://dl.k8s.io/v1.10.6/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+# RUN  curl -L https://dl.k8s.io/v1.10.6/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
 
 WORKDIR /opt/odc/restcube
 ADD . .
