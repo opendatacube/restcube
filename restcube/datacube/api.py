@@ -43,24 +43,23 @@ data:
 """
 
     # in EKS, not required to save a configfile
-    #CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
-    #                     os.path.expanduser('~/.datacube.conf')]
+    CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
+                         os.path.expanduser('~/.datacube.conf')]
 
     # create new section in datacube config - local testing
-    #config = configparser.RawConfigParser()
-    #config.read(CONFIG_FILE_PATHS[1])
+    config = configparser.RawConfigParser()
+    config.read(CONFIG_FILE_PATHS[1])
 
-    #config.add_section(new_db_name)
-    #config.set(new_db_name, 'DB_USERNAME', new_db_user)
-    #config.set(new_db_name, 'DB_HOSTNAME', db_host)
-    #config.set(new_db_name, 'DB_PORT', db_port)
-    #config.set(new_db_name, 'DB_DATABASE', new_db_name)
-    #config.set(new_db_name, 'DB_PASSWORD', new_db_password)
+    config.add_section(new_db_name)
+    config.set(new_db_name, 'DB_USERNAME', new_db_user)
+    config.set(new_db_name, 'DB_HOSTNAME', db_host)
+    config.set(new_db_name, 'DB_PORT', db_port)
+    config.set(new_db_name, 'DB_DATABASE', new_db_name)
+    config.set(new_db_name, 'DB_PASSWORD', new_db_password)
 
-    #with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
-    #    config.write(configfile)
+    with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
+        config.write(configfile)
 
-    # Same as above but with kubenetes
 
     proc = subprocess.Popen(['bash', str( Path(__file__).parent.parent/'scripts/create-db.sh')], stdout=subprocess.PIPE,
                             env={'DB_USERNAME': new_db_user,
@@ -78,6 +77,7 @@ data:
                                            validate_connection=False)
     status = index.init_db(with_default_types=True)
 
+    # Create kubenetes secrets for the new database owner 
     code = yuamel.yaml.load(secret_str, ruamel.yaml.RoundTripLoader)
     code['metadata']['name'] = new_db_name
     code['data']['postgres-username'] = new_db_user
