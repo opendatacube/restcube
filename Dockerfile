@@ -22,7 +22,7 @@ RUN pip install -U 'aiobotocore[awscli,boto3]' \
     && rm -rf $HOME/.cache/pip
 
 RUN pip3 install flask flask-restful flask-cors flask-cognito psycopg2 gunicorn boto3 requests validators \
-  gevent aiobotocore[awscli] celery[redis] furl flask-redis webargs && rm -rf $HOME/.cache/pip
+  gevent aiobotocore[awscli] celery[redis] furl flask-redis pyyaml webargs && rm -rf $HOME/.cache/pip
 
 RUN pip3 install --extra-index-url="https://packages.dea.gadevs.ga" odc-apps-cloud
 

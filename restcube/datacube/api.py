@@ -17,8 +17,7 @@ from datacube.config import LocalConfig
 
 import validators
 import requests
-from yaml import safe_load_all, safe_load
-
+import yaml
 import psycopg2
 from psycopg2 import sql
 import configparser
@@ -75,6 +74,10 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     secret_template['data']['postgres-password'] = base64.b64encode(new_db_password)
     secret_template['metadata']['namespace'] = 'webtools'
     output_file_name = '/tmp/' + new_db_name
+
+    with open(output_file_name, 'w') as fp:
+        yaml.dump(secret_template, fp, default_flow_style=False)
+
     kube = subprocess.Popen(['kubectl apply -f {}'.format(filename) ]) 
     
     return new_db_name 
