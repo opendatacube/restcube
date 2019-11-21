@@ -78,7 +78,7 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     with open(output_file_name, 'w') as fp:
         yaml.dump(secret_template, fp, default_flow_style=False)
 
-    kube = subprocess.Popen(['kubectl apply -f {}'.format(filename) ]) 
+    kube = subprocess.Popen(['kubectl apply -f {}'.format(output_file_name) ]) 
     
     return new_db_name 
 
