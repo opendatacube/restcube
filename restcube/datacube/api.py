@@ -70,8 +70,8 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     secret_template = {'apiVersion':'v1', 'kind':'Secret', 'metadata':{'name':'','namespace':''},'type':'Opaque','data':{'postgres-username':'','postgres-password':''}} 
     # add new postgres user to secret
     secret_template['metadata']['name'] = new_db_name
-    secret_template['data']['postgres-username'] = base64.b64encode(new_db_user)
-    secret_template['data']['postgres-password'] = base64.b64encode(new_db_password)
+    secret_template['data']['postgres-username'] = base64.b64encode(new_db_user.encode()).decode()
+    secret_template['data']['postgres-password'] = base64.b64encode(new_db_password.encode()).decode()
     secret_template['metadata']['namespace'] = 'webtools'
     output_file_name = '/tmp/' + new_db_name
 
