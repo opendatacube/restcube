@@ -26,7 +26,7 @@ import configparser
 import boto3
 from urllib.parse import urlparse
 
-from ruamel.yaml
+import ruamel.yaml
 
 # Create a database
 # init the database
