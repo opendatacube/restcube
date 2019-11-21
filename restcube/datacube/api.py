@@ -25,22 +25,11 @@ import configparser
 
 import boto3
 from urllib.parse import urlparse
-
-import ruamel.yaml
+import base64
 
 # Create a database
 # init the database
 def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port, admin_username='test', admin_password='test'):
-    secret_str ="""\
-apiVersion: v1
-kind: Secret
-metadata:
-  name: 
-type: Opaque
-data:
-  postgres-username: 
-  postgres-password: 
-"""
 
     # in EKS, not required to save a configfile
     CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
@@ -78,19 +67,15 @@ data:
     status = index.init_db(with_default_types=True)
 
     # Create kubenetes secrets for the new database owner 
-    code = ruamel.yaml.load(secret_str, ruamel.yaml.RoundTripLoader)
-    code['metadata']['name'] = new_db_name
-    code['data']['postgres-username'] = new_db_user
-    code['data']['postgres-password'] = new_db_password
-    file_name = '/tmp/' + new_db_name
-
-
-    with open(file_name, 'w') as fp:
-        yaml.dump(code, fp)
-
+    
+    secret_template = {'apiVersion':'v1', 'kind':'Secret', 'metadata':{'name':'','namespace':''},'type':'Opaque','data':{'postgres-username':'','postgres-password':''}} 
+    # add new postgres user to secret
+    secret_template['metadata']['name'] = new_db_name
+    secret_template['data']['postgres-username'] = base64.b64encode(new_db_user)
+    secret_template['data']['postgres-password'] = base64.b64encode(new_db_password)
+    secret_template['metadata']['namespace'] = 'webtools'
+    output_file_name = '/tmp/' + new_db_name
     kube = subprocess.Popen(['kubectl apply -f {}'.format(filename) ]) 
-
-
     
     return new_db_name 
 

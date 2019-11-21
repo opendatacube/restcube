@@ -7,7 +7,6 @@ requests
 validators
 celery[redis]
 furl
-ruamel.yaml
 flask-redis
 webargs
 aiobotocore[awscli]
