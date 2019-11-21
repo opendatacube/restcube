@@ -3,6 +3,7 @@
 # Contains Datacube API wrapper 
 # Functions which require a datacube to be created should be placed in this file
 import os
+import sys
 import subprocess
 import json
 from pathlib import Path
@@ -25,28 +26,39 @@ import configparser
 import boto3
 from urllib.parse import urlparse
 
+from ruamel.yaml
 
 # Create a database
 # init the database
 def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port, admin_username='test', admin_password='test'):
+    secret_str ="""\
+apiVersion: v1
+kind: Secret
+metadata:
+  name: 
+type: Opaque
+data:
+  postgres-username: 
+  postgres-password: 
+"""
 
-    CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
-                         os.path.expanduser('~/.datacube.conf')]
+    # in EKS, not required to save a configfile
+    #CONFIG_FILE_PATHS = [str( Path(__file__).parent/ 'datacube.conf'),
+    #                     os.path.expanduser('~/.datacube.conf')]
 
     # create new section in datacube config - local testing
-    config = configparser.RawConfigParser()
-    config.read(CONFIG_FILE_PATHS[1])
+    #config = configparser.RawConfigParser()
+    #config.read(CONFIG_FILE_PATHS[1])
 
-    config.add_section(new_db_name)
-    config.set(new_db_name, 'DB_USERNAME', new_db_user)
-    config.set(new_db_name, 'DB_HOSTNAME', db_host)
-    config.set(new_db_name, 'DB_PORT', db_port)
-    config.set(new_db_name, 'DB_DATABASE', new_db_name)
-    config.set(new_db_name, 'DB_PASSWORD', new_db_password)
+    #config.add_section(new_db_name)
+    #config.set(new_db_name, 'DB_USERNAME', new_db_user)
+    #config.set(new_db_name, 'DB_HOSTNAME', db_host)
+    #config.set(new_db_name, 'DB_PORT', db_port)
+    #config.set(new_db_name, 'DB_DATABASE', new_db_name)
+    #config.set(new_db_name, 'DB_PASSWORD', new_db_password)
 
-    with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
-        config.write(configfile)
-
+    #with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
+    #    config.write(configfile)
 
     # Same as above but with kubenetes
 
@@ -65,8 +77,22 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     index = index_connect(LocalConfig.find(CONFIG_FILE_PATHS, env=new_db_name), # to be replace with kubenetes config
                                            validate_connection=False)
     status = index.init_db(with_default_types=True)
+
+    code = yuamel.yaml.load(secret_str, ruamel.yaml.RoundTripLoader)
+    code['metadata']['name'] = new_db_name
+    code['data']['postgres-username'] = new_db_user
+    code['data']['postgres-password'] = new_db_password
+    file_name = '/tmp/' + new_db_name
+
+
+    with open(file_name, 'w') as fp:
+        yaml.dump(code, fp)
+
+    kube = subprocess.Popen(['kubectl apply -f {}'.format(filename) ]) 
+
+
     
-    return status 
+    return new_db_name 
 
 
 

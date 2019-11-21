@@ -16,8 +16,6 @@ def create_app():
     app.config['COGNITO_REGION']=os.getenv('COGNITO_REGION', None)
     app.config['COGNITO_USERPOOL_ID']=os.getenv('COGNITO_USERPOOL_ID', None)
 
-    app._static_folder = os.getenv('STATIC_FOLDER', None)
-
     return app
 
 def make_celery(app=None):

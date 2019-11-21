@@ -37,5 +37,8 @@ class Database(Resource):
         db_host = os.getenv("DB_HOSTNAME")
         db_port = os.getenv("DB_PORT")
 
-        return jsonify(status=create_database(db_name, db_user, db_password, db_host, db_port))
+        admin_username = os.getenv("DB_USERNAME", None)
+        admin_password = os.getenv("DB_PASSWORD", None)
+
+        return jsonify(secret_name=create_database(db_name, db_user, db_password, db_host, db_port, admin_username, admin_password))
 
