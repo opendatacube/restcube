@@ -78,7 +78,7 @@ data:
     status = index.init_db(with_default_types=True)
 
     # Create kubenetes secrets for the new database owner 
-    code = yuamel.yaml.load(secret_str, ruamel.yaml.RoundTripLoader)
+    code = ruamel.yaml.load(secret_str, ruamel.yaml.RoundTripLoader)
     code['metadata']['name'] = new_db_name
     code['data']['postgres-username'] = new_db_user
     code['data']['postgres-password'] = new_db_password
