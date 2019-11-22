@@ -48,7 +48,7 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
     with open(CONFIG_FILE_PATHS[1], 'w') as configfile:
         config.write(configfile)
 
-
+    # use script to create database, create db user, and assign role
     proc = subprocess.Popen(['bash', str( Path(__file__).parent.parent/'scripts/create-db.sh')], stdout=subprocess.PIPE,
                             env={'DB_USERNAME': new_db_user,
                                  'DB_HOSTNAME': db_host,
@@ -57,9 +57,10 @@ def create_database(new_db_name, new_db_user, new_db_password, db_host, db_port,
                                  'ADMIN_PASSWORD': admin_password,
                                  'DB_DATABASE': new_db_name,
                                  'DB_PASSWORD': new_db_password})
-
-    child = proc.communicate()[0]
-    # init db
+ 
+    child = proc.communicate()[0] # wait for subprocess to finish
+    
+    # equivelant as database system init on the new db
     
     index = index_connect(LocalConfig.find(CONFIG_FILE_PATHS, env=new_db_name), # to be replace with kubenetes config
                                            validate_connection=False)

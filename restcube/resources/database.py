@@ -3,12 +3,14 @@
 import os
 import random
 import string
+
 from flask_cognito import cognito_auth_required
 from flask import jsonify, request
 from flask_restful import reqparse, abort, Resource
 from yaml import safe_load_all
 
 from datacube import Datacube
+from restcube.util import special_character_checker
 from restcube.datacube.api import create_database
 
 #postargparser = reqparse.RequestParser()
@@ -30,7 +32,11 @@ class Database(Resource):
         #db_user = args['new_db_name'] + 'read'
 
         json_data = request.get_json(force=True)
-        db_name = json_data['new_db_name']
+        db_name = json_data['new_db_name'].replace(" ","")
+        #dbname validation 
+        if not special_character_checker(db_name):
+           return jsonify({'message':'database name is invalid, please try without any special characters'}) 
+
         db_user = db_name +'read'
         db_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
 
