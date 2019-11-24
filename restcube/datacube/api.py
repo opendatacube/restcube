@@ -151,11 +151,11 @@ def add_datasets(urls, product):
                 bucket, key = get_bucket_and_key(url)
                 s3 = boto3.resource("s3")
                 s3_obj = s3.Object(bucket, key).get(ResponseCacheControl='no-cache')
-                doc = safe_load(s3_obj['Body'].read())
+                doc = yaml.safe_load(s3_obj['Body'].read())
             else:
                 doc_request = requests.get(url)
                 doc_request.raise_for_status()
-                doc = safe_load(doc_request.text)
+                doc = yaml.safe_load(doc_request.text)
 
             dataset, err = resolver(doc, url)
 
@@ -181,7 +181,7 @@ def add_products(product_definition_url):
     with Datacube() as dc:
         doc_request = requests.get(product_definition_url)
         doc_request.raise_for_status()
-        docs = safe_load_all(doc_request.text)
+        docs = yaml.safe_load_all(doc_request.text)
 
         for doc in docs:
             product = dc.index.products.from_doc(doc)
