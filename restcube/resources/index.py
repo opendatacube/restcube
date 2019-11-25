@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask_restful import Api, reqparse, abort, Resource, request
-from flask import current_app
+from flask import current_app, jsonify
 from flask_cognito import cognito_auth_required
 from restcube.tasks.indexing import index_from_s3
 from restcube.resources.tasks import Task
@@ -33,4 +33,4 @@ class Index(Resource):
             abort(400, message="no s3 pattern defined")
         index_task = index_from_s3.apply_async(args=[s3_pattern, dc_product])
         api = Api
-        return "{}", 202, {"Location": api.url_for(api(current_app), Task, task_id=index_task.id)}
+        return jsonify({"task_id": index_task.id})
