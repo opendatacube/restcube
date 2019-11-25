@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask_restful import Api, reqparse, abort, Resource
+from flask_restful import Api, reqparse, abort, Resource, request
 from flask import current_app
 from flask_cognito import cognito_auth_required
 from restcube.tasks.indexing import index_from_s3
 from restcube.resources.tasks import Task
 import os
+import json
 
 postargparser = reqparse.RequestParser()
 postargparser.add_argument('pattern', type=str, required=True, help="S3 Pattern to search")
@@ -22,9 +23,12 @@ class Index(Resource):
         """
         Creates a task to index data into the datacube
         """
-        args = postargparser.parse_args()
-        s3_pattern = args['pattern']
-        dc_product = args['dc_product']
+        #args = postargparser.parse_args()
+        #s3_pattern = args['pattern']
+        #dc_product = args['dc_product']
+        json_data = request.get_json(force=True)
+        s3_pattern = json_data['s3_pattern']
+        dc_product = json_data['dc_product']
         if s3_pattern is None:
             abort(400, message="no s3 pattern defined")
         index_task = index_from_s3.apply_async(args=[s3_pattern, dc_product])
