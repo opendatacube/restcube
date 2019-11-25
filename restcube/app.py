@@ -9,7 +9,7 @@ from restcube.resources.products import Product, Products
 from restcube.resources.datasets import Dataset, Datasets, Locations
 from restcube.resources.datacube import Datacube
 from restcube.resources.tasks import Task, Tasks
-#from restcube.resources.index import Index
+from restcube.resources.index import Index
 from restcube.resources.data import Data
 from restcube.resources.database import Database
 
