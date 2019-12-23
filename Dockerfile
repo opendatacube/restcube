@@ -1,7 +1,7 @@
 # This Dockerfile should follow the Travis configuration process
 # available here: https://github.com/opendatacube/datacube-core/blob/develop/.travis.yml
 
-FROM opendatacube/datacube-core:latest
+FROM opendatacube/datacube-core:1.7
 
 # Make sure apt doesn't ask questions
 ENV DEBIAN_FRONTEND=noninteractive
